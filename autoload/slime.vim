@@ -223,7 +223,11 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:X11Send(config, text)
-  call system("xdotool type --delay 0 --window " . b:slime_config["window_id"] . " -- " . shellescape(a:text))
+  let cmd = "w=`xdotool getactivewindow` &&
+    \ xdotool click --window " . b:slime_config["window_id"] . " 1 &&
+    \ xdotool type --clearmodifiers --delay 0 --window " . b:slime_config["window_id"] . " -- " . shellescape(a:text) . " &&
+    \ xdotool windowactivate $w"
+  call system(cmd)
 endfunction
 
 function! s:X11Config() abort
@@ -421,4 +425,3 @@ function! s:SlimeDispatch(name, ...)
   let target = substitute(tolower(g:slime_target), '\(.\)', '\u\1', '') " Capitalize
   return call("s:" . target . a:name, a:000)
 endfunction
-
